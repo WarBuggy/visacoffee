@@ -2,7 +2,7 @@ let fs = require('fs-extra');
 
 module.exports = function (app) {
     app.post('/save', async function (request, response) {
-        let savedOrders = await getSavedOrders();
+        let savedOrders = await getSavedOrdersFromJson();
         if (savedOrders == null) {
             response.status(550);
             response.json({ success: false, });
@@ -31,7 +31,7 @@ module.exports = function (app) {
         }
     });
 
-    async function getSavedOrders() {
+    async function getSavedOrdersFromJson() {
         try {
             const data = await fs.readJson('./orders.json');
             return data.Orders;
@@ -40,4 +40,27 @@ module.exports = function (app) {
             return null;
         }
     };
+
+    app.post('/getOrder', async function (request, response) {
+        let savedOrders = await getSavedOrdersFromJson();
+        if (savedOrders == null) {
+            response.status(550);
+            response.json({ success: false, });
+            return;
+        }
+        let classmateName = request.body.name;
+        if (savedOrders[classmateName] == null) {
+            response.status(551);
+            response.json({ success: false, });
+            return;
+        };
+        let coffee = savedOrders[classmateName].Coffee || '';
+        console.log(coffee);
+        response.json({
+            success: true,
+            result: 0,
+            name: classmateName,
+            coffee: coffee,
+        });
+    });
 };

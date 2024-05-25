@@ -474,11 +474,32 @@
                 if (i < foundClassmates.length - 1) {
                     divName.classList.add("bottom-border");
                 }
-                divName.onclick = function () {
+                divName.onclick = async function () {
                     showChosenClassmate(foundClassmates[i]);
+                    let response = await getSavedOrderOfClassmate(foundClassmates[i]);
                 };
             }
         }
+
+        async function getSavedOrderOfClassmate(classmate) {
+            document.getElementById('divOverlay').style.display = 'block';
+            let data = {
+                name: document.getElementById('spanShowName').getAttribute('chosen'),
+            };
+            let response = await sendToBackend('getOrder', data);
+            if (!response.success) {
+                alert(`Error ${response.code}.\nPlease refresh and try again!`);
+                return;
+            }
+            if (response.coffee == '') {
+                document.getElementById('divOrder').style.display = 'block';
+                document.getElementById('divConfirmation').style.display = 'none';
+                resetCoffeeChoice();
+            } else {
+                showConfirmation(response.result.coffee);
+            }
+            document.getElementById('divOverlay').style.display = 'none';
+        };
 
         function showInputNameOuter() {
             document.getElementById('inputName').value = '';
@@ -500,9 +521,7 @@
             document.getElementById('divFoundNames').innerHTML = '';
             document.getElementById('divInputNameOuter').style.display = 'none';
             document.getElementById('divShowName').style.display = 'grid';
-            document.getElementById('divOrder').style.display = 'block';
-            document.getElementById('divConfirmation').style.display = 'none';
-            resetCoffeeChoice();
+
         };
 
         function showChosenClassmate(classmate) {
