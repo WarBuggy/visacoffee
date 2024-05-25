@@ -73,4 +73,20 @@ module.exports = function (app) {
         }
         console.log(`getOrder: ${classmateName}, ${debugCoffee}.`);
     });
+
+    app.post('/allOrders', async function (request, response) {
+        let savedOrders = await getSavedOrdersFromJson();
+        if (savedOrders == null) {
+            response.status(550);
+            response.json({ success: false, });
+            console.log('allOrders: Error 550.');
+            return;
+        }
+        response.json({
+            success: true,
+            result: 0,
+            allOrders: savedOrders,
+        });
+        console.log(`allOrders served.`);
+    });
 };
