@@ -559,7 +559,7 @@
             };
             let response = await sendToBackend('save', data);
             if (!response.success) {
-                alert(`Error ${response.code}`);
+                alert(`Error ${response.code}.\nPlease refresh and try again!`);
                 return;
             }
             showConfirmation(response.result.coffee);
