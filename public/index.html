@@ -491,7 +491,7 @@
                 alert(`Error ${response.code}.\nPlease refresh and try again!`);
                 return;
             }
-            if (response.coffee == '') {
+            if (response.result.coffee == '') {
                 document.getElementById('divOrder').style.display = 'block';
                 document.getElementById('divConfirmation').style.display = 'none';
                 resetCoffeeChoice();
