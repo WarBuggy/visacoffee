@@ -106,13 +106,40 @@
     </style>
     <!-- SCRIPT -->
     <script>
-        window.onload = async function() {
+        window.onload = async function () {
             let response = await sendToBackend('allOrders');
             if (!response.success) {
                 addInnerHTML(`Error ${response.code}.<br/>Please refresh and try again!`);
+                document.getElementById('divContent').style.display = 'block';
                 return;
             }
-            console.log(response.result.orders);
+            console.log(response.result.allOrders);
+            let coffeeForUndecided = 'Caffè Latte';
+            let undecidedClassmates = [];
+            let orders = {};
+            for (const [classmate, detail] of Object.entries(response.result.allOrders)) {
+                let coffee = detail.Coffee;
+                if (coffee == null || coffee == '') {
+                    undecidedClassmates.push(classmate);
+                    coffee = coffeeForUndecided;
+                }
+                addCoffee(coffee, orders);
+            }
+            console.log(orders);
+            if (undecidedClassmates.length > 0) {
+                addInnerHTML(`<b>${undecidedClassmates.length}</b> undecided: ${undecidedClassmates.join(', ')}.`);
+            }
+            let numOfOrderedUndecidedCoffee = orders[coffeeForUndecided];
+            if (numOfOrderedUndecidedCoffee != null) {
+                addInnerHTML('<br/>');
+                addInnerHTML(`<b>${coffeeForUndecided}</b>: ${numOfOrderedUndecidedCoffee} (${undecidedClassmates.length} undecided).`);
+                delete orders[coffeeForUndecided];
+            }
+            for (const [coffee, orderNum] of Object.entries(orders)) {
+                addInnerHTML('<br/>');
+                addInnerHTML(`<b>${coffee}</b>: ${orderNum}.`);
+            }
+            document.getElementById('divContent').style.display = 'block';
         };
 
         function sendToBackend(webPart, dataJson) {
@@ -184,12 +211,23 @@
             span.innerHTML = innerHTML;
             document.getElementById('divContent').appendChild(span);
         };
+
+        function addCoffee(coffee, orders) {
+            let orderNum = orders[coffee];
+            if (orderNum != null) {
+                orders[coffee] = orderNum + 1;
+                return;
+            }
+            orders[coffee] = 1;
+        };
     </script>
 </head>
 
 <body>
-    <div style="width: 100vw; height: 100vh; overflow: auto; position: absolute; background-color: #1ab9a7; display: grid; grid-template-columns: 1fr;">
-        <div id='divContent' style="width: 320px; height: 100px; justify-self: center; background-color: white; margin-top: 20px; padding: 5px;">
+    <div
+        style="width: 100vw; height: 100vh; overflow: auto; position: absolute; background-color: #1ab9a7; display: grid; grid-template-columns: 1fr;">
+        <div id='divContent'
+            style="width: 320px; justify-self: center; background-color: white; margin-top: 20px; padding: 5px; height: fit-content; display: none;">
         </div>
     </div>
 </body>
