@@ -534,8 +534,7 @@
             document.getElementById('divConfirm').style.display = 'none';
         }
 
-        function showConfirmation() {
-            let coffeeName = document.getElementById('inputCoffee').value;
+        function showConfirmation(coffeeName) {
             resetCoffeeChoice();
             document.getElementById('divOrder').style.display = 'none';
             let article = 'a';
@@ -559,6 +558,8 @@
                 coffee: document.getElementById('inputCoffee').value,
             };
             let response = await sendToBackend('save', data);
+            showConfirmation(response.result.coffee);
+            document.getElementById('divOverlay').style.display = 'none';
         };
 
         function sendToBackend(webPart, dataJson) {
