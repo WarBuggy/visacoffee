@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const http = require('http');
 const app = express();
+const fs = require('fs-extra');
 const portNumber = 8566;
 
 start();
@@ -15,3 +16,4 @@ async function start() {
         require('./api.js')(app);
     });
 };
+
