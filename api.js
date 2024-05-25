@@ -6,12 +6,14 @@ module.exports = function (app) {
         if (savedOrders == null) {
             response.status(550);
             response.json({ success: false, });
+            console.log('save: Error 550.');
             return;
         }
         let classmateName = request.body.name;
         if (savedOrders[classmateName] == null) {
             response.status(551);
             response.json({ success: false, });
+            console.log('save: Error 551.');
             return;
         };
         let coffee = request.body.coffee;
@@ -24,10 +26,12 @@ module.exports = function (app) {
                 name: classmateName,
                 coffee: coffee,
             });
+            console.log(`save: ${classmateName}, ${coffee}.`);
         } catch (err) {
             console.error(err);
             response.status(552);
             response.json({ success: false, });
+            console.log('save: Error 552.');
         }
     });
 
@@ -46,16 +50,18 @@ module.exports = function (app) {
         if (savedOrders == null) {
             response.status(550);
             response.json({ success: false, });
+            console.log('save: Error 550.');
             return;
         }
         let classmateName = request.body.name;
         if (savedOrders[classmateName] == null) {
             response.status(551);
             response.json({ success: false, });
+            console.log('save: Error 551.');
             return;
         };
         let coffee = savedOrders[classmateName].Coffee || '';
-        console.log(coffee);
+        console.log(`getOrder: ${classmateName}, ${coffee}.`);
         response.json({
             success: true,
             result: 0,
