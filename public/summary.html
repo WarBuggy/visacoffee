@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <!-- Link preview -->
+    <meta name="description" content="Visa Coffee Summary Page">
+    <meta name="keywords" content="visa,coffee,order,summary">
+    <meta property="og:image" content="img/logo_square.png" />
+    <link rel="image_src" href="img/logo_square.png" />
+    <!-- View port meta-->
+    <meta name="viewport"
+        content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, user-scalable=no, minimal-ui" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="full-screen" content="yes" />
+    <meta name="screen-orientation" content="portrait" />
+    <!-- favicon -->
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <title>Visa Coffee Summary Page</title>
+    <!-- CSS -->
+    <style>
+        @font-face {
+            /* quicksand-regular - latin-ext_latin_vietnamese */
+            font-family: "Quicksand";
+            font-style: normal;
+            font-weight: 400;
+            src: url("font/Quicksand/quicksand-v15-latin-ext_latin_vietnamese-regular.eot");
+            /* IE9 Compat Modes */
+            src: local(""), url("font/Quicksand/quicksand-v15-latin-ext_latin_vietnamese-regular.eot?#iefix") format("embedded-opentype"),
+                /* IE6-IE8 */
+                url("font/Quicksand/quicksand-v15-latin-ext_latin_vietnamese-regular.woff2") format("woff2"),
+                /* Super Modern Browsers */
+                url("font/Quicksand/quicksand-v15-latin-ext_latin_vietnamese-regular.woff") format("woff"),
+                /* Modern Browsers */
+                url("font/Quicksand/quicksand-v15-latin-ext_latin_vietnamese-regular.ttf") format("truetype"),
+                /* Safari, Android, iOS */
+                url("font/Quicksand/quicksand-v15-latin-ext_latin_vietnamese-regular.svg#Quicksand") format("svg");
+            /* Legacy iOS */
+        }
+
+        @font-face {
+            /* quicksand-700 - latin-ext_latin_vietnamese */
+            font-family: "Quicksand";
+            font-style: normal;
+            font-weight: 700;
+            src: url("font/Quicksand/quicksand-v15-latin-ext_latin_vietnamese-700.eot");
+            /* IE9 Compat Modes */
+            src: local(""), url("font/Quicksand/quicksand-v15-latin-ext_latin_vietnamese-700.eot?#iefix") format("embedded-opentype"),
+                /* IE6-IE8 */
+                url("font/Quicksand/quicksand-v15-latin-ext_latin_vietnamese-700.woff2") format("woff2"),
+                /* Super Modern Browsers */
+                url("font/Quicksand/quicksand-v15-latin-ext_latin_vietnamese-700.woff") format("woff"),
+                /* Modern Browsers */
+                url("font/Quicksand/quicksand-v15-latin-ext_latin_vietnamese-700.ttf") format("truetype"),
+                /* Safari, Android, iOS */
+                url("font/Quicksand/quicksand-v15-latin-ext_latin_vietnamese-700.svg#Quicksand") format("svg");
+            /* Legacy iOS */
+        }
+
+        html {
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+            overflow: hidden;
+            touch-action: manipulation;
+            outline: 0;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            font-family: "Quicksand", sans-serif;
+            font-size: 14px;
+        }
+
+        html,
+        body {
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+            overflow: hidden;
+            touch-action: manipulation;
+            outline: 0;
+            padding: 0;
+            margin: 0;
+            font-size: 0px;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            color: var(--color-text-1);
+            background-color: var(--color-bg-1);
+            font-family: "Quicksand", sans-serif;
+            font-size: 14px;
+        }
+
+        p {
+            margin: 0px;
+        }
+    </style>
+    <!-- SCRIPT -->
+    <script>
+        window.onload = async function() {
+            let response = await sendToBackend('allOrders');
+            if (!response.success) {
+                addInnerHTML(`Error ${response.code}.<br/>Please refresh and try again!`);
+                return;
+            }
+            console.log(response.result.orders);
+        };
+
+        function sendToBackend(webPart, dataJson) {
+            let url = "https://capsulestudio.com.vn/api_visacoffee/" + webPart;
+            return new Promise(function (resolve, reject) {
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function () {
+                    if (this.readyState === 4) {
+                        if (this.status === 200) {
+                            parseJSON(this['response'])
+                                .then(function (parseResult) {
+                                    let result = parseResult.result;
+                                    if (result != 0) {
+                                        resolve({
+                                            success: false,
+                                            code: result,
+                                        });
+                                    } else {
+                                        resolve({
+                                            success: true,
+                                            result: parseResult,
+                                        });
+                                    }
+                                })
+                                .catch(function () {
+                                    resolve({
+                                        success: false,
+                                        code: 1, // cannot parse response JSON
+                                    });
+                                });
+                        } else {
+                            resolve({
+                                success: false,
+                                code: this.status,
+                            });
+                        }
+                    }
+                }
+                xmlhttp.onerror = function (xmlhttpErr) {
+                    reject(xmlhttpErr);
+                }
+                let params = '';
+                for (let key in dataJson) {
+                    if (dataJson.hasOwnProperty(key)) {
+                        params = params + key + '=' + dataJson[key] + '&';
+                    }
+                }
+                params = params.slice(0, -1);
+                xmlhttp.open('POST', url, true);
+                xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xmlhttp.setRequestHeader('cache', 'no-cahce');
+                xmlhttp.send(params);
+            });
+        };
+
+        function parseJSON(input) {
+            return new Promise(function (resolve, reject) {
+                let jsonRes = JSON.parse(input);
+                if (jsonRes.success) {
+                    resolve(jsonRes);
+                } else {
+                    reject(jsonRes);
+                }
+            });
+        };
+
+        function addInnerHTML(innerHTML) {
+            let span = document.createElement('span');
+            span.innerHTML = innerHTML;
+            document.getElementById('divContent').appendChild(span);
+        };
+    </script>
+</head>
+
+<body>
+    <div style="width: 100vw; height: 100vh; overflow: auto; position: absolute; background-color: #1ab9a7; display: grid; grid-template-columns: 1fr;">
+        <div id='divContent' style="width: 320px; height: 100px; justify-self: center; background-color: white; margin-top: 20px; padding: 5px;">
+        </div>
+    </div>
+</body>
+
+</html>
