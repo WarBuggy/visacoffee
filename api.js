@@ -21,8 +21,8 @@ module.exports = function (app) {
 
     async function getSavedOrders() {
         try {
-            const savedOrders = await fs.readJson('./orders.js')
-            console.log(packageObj.version);
+            const savedOrders = await fs.readJson('./orders.json')
+            console.log(savedOrders);
             return savedOrders;
         } catch (err) {
             console.error(err);
