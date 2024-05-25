@@ -8,22 +8,33 @@ module.exports = function (app) {
             response.json({ success: false, });
             return;
         }
-        console.log(savedOrders);
         let classmateName = request.body.name;
+        if (savedOrders[classmateName] == null) {
+            response.status(551);
+            response.json({ success: false, });
+            return;
+        };
         let coffee = request.body.coffee;
-        response.json({
-            success: true,
-            result: 0,
-            name: classmateName,
-            coffee: coffee,
-        });
+        savedOrders[classmateName].Coffee = coffee;
+        try {
+            await fs.writeJson('./orders.json', { "Orders": savedOrders });
+            response.json({
+                success: true,
+                result: 0,
+                name: classmateName,
+                coffee: coffee,
+            });
+        } catch (err) {
+            console.error(err);
+            response.status(552);
+            response.json({ success: false, });
+        }
     });
 
     async function getSavedOrders() {
         try {
-            const savedOrders = await fs.readJson('./orders.json')
-            console.log(savedOrders);
-            return savedOrders;
+            const data = await fs.readJson('./orders.json');
+            return data.Orders;
         } catch (err) {
             console.error(err);
             return null;
