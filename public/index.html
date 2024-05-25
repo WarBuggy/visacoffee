@@ -489,6 +489,7 @@
 
         function showInputNameOuter() {
             document.getElementById('inputName').value = '';
+            document.getElementById('spanShowName').setAttribute('chosen', '');
             document.getElementById('spanShowName').innerHTML = '';
             document.getElementById('divInputNameOuter').style.display = 'block';
             document.getElementById('divShowName').style.display = 'none';
@@ -514,6 +515,7 @@
         function showChosenClassmate(classmate) {
             hideInputNameOuter();
             document.getElementById('spanShowName').innerHTML = `Hello, <b>${classmate.prefix} ${classmate.firstName}</b>!`;
+            document.getElementById('spanShowName').setAttribute('chosen', classmate.firstName);
         };
 
         function showCoffeeChoices() {
@@ -550,8 +552,77 @@
             document.getElementById('divOrder').style.display = 'block';
         };
 
-        function confirmChoice() {
+        async function confirmChoice() {
             document.getElementById('divOverlay').style.display = 'block';
+            let data = {
+                name: document.getElementById('spanShowName').getAttribute('chosen'),
+                coffee: document.getElementById('inputCoffee').value,
+            };
+            let response = await sendToBackend('save', data);
+        };
+
+        function sendToBackend(webPart, dataJson) {
+            let url = "https://capsulestudio.com.vn/api_visacoffee/" + webPart;
+            return new Promise(function (resolve, reject) {
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function () {
+                    if (this.readyState === 4) {
+                        if (this.status === 200) {
+                            Common.parseJSON(this['response'])
+                                .then(function (parseResult) {
+                                    let result = parseResult.result;
+                                    if (result != 0) {
+                                        resolve({
+                                            success: false,
+                                            code: result,
+                                        });
+                                    } else {
+                                        resolve({
+                                            success: true,
+                                            result: parseResult,
+                                        });
+                                    }
+                                })
+                                .catch(function () {
+                                    resolve({
+                                        success: false,
+                                        code: 1, // cannot parse response JSON
+                                    });
+                                });
+                        } else {
+                            resolve({
+                                success: false,
+                                code: this.status,
+                            });
+                        }
+                    }
+                }
+                xmlhttp.onerror = function (xmlhttpErr) {
+                    reject(xmlhttpErr);
+                }
+                let params = '';
+                for (let key in dataJson) {
+                    if (dataJson.hasOwnProperty(key)) {
+                        params = params + key + '=' + dataJson[key] + '&';
+                    }
+                }
+                params = params.slice(0, -1);
+                xmlhttp.open('POST', url, true);
+                xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xmlhttp.setRequestHeader('cache', 'no-cahce');
+                xmlhttp.send(params);
+            });
+        };
+
+        function parseJSON(input) {
+            return new Promise(function (resolve, reject) {
+                let jsonRes = JSON.parse(input);
+                if (jsonRes.success) {
+                    resolve(jsonRes);
+                } else {
+                    reject(jsonRes);
+                }
+            });
         };
     </script>
 </head>
@@ -574,7 +645,7 @@
                 </div>
             </div>
             <div id="divShowName" class="show-name" style="display: none;">
-                <span id="spanShowName" class="text selected-classmate"></span>
+                <span id="spanShowName" class="text selected-classmate" chosen=""></span>
                 <span class="change-selection" onclick="showInputNameOuter()">This is not me!</span>
             </div>
             <div id="divOrder" class="order">
