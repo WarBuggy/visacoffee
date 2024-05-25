@@ -558,6 +558,10 @@
                 coffee: document.getElementById('inputCoffee').value,
             };
             let response = await sendToBackend('save', data);
+            if (!response.success){
+                console.log(response);
+            }
+
             showConfirmation(response.result.coffee);
             document.getElementById('divOverlay').style.display = 'none';
         };
