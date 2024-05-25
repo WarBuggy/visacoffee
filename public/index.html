@@ -13,7 +13,7 @@
         content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, user-scalable=no, minimal-ui" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="full-screen" content="yes" />
-    <meta name="screen-orientation" content="landscape" />
+    <meta name="screen-orientation" content="portrait" />
     <!-- favicon -->
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
     <link rel="icon" href="img/favicon.ico" type="image/x-icon">
@@ -229,20 +229,13 @@
             height: 100vh;
             overflow: auto;
             position: absolute;
-        }
-
-        div.top-area {
-            width: 100vw;
-            height: 500px;
             background-color: #1ab9a7;
-            position: absolute;
-            top: 0px;
         }
 
         div.content {
-            width: 450px;
+            width: 320px;
             background-color: #fff;
-            top: 150px;
+            top: 20px;
             position: absolute;
             left: 50%;
             transform: translate(-50%, 0%);
@@ -340,12 +333,12 @@
             color: #00aeef;
             text-decoration: underline;
             cursor: pointer;
-            align-self: center;
+            justify-self: self-end;
         }
 
         div.show-name {
             display: grid;
-            grid-template-columns: 1fr auto;
+            grid-template-columns: 1fr;
         }
 
         div.order {
@@ -640,7 +633,7 @@
             <span class="text">Thank you for voting! As a token of appreciation, please have a coffee from <b>Blue
                     Bottle</b>!</span>
             <div class="input-name-outer" id="divInputNameOuter">
-                <input type="text" id="inputName" class="text-input" placeholder="Type and select your first name!"
+                <input type="text" id="inputName" class="text-input" placeholder="Type & select your name!"
                     onkeyup="nameInputChange(event)">
                 <div id="divNameSelection" class="name-selection">
                     <div id="divFoundNames" class='name-border' style="display: none;"></div>
@@ -667,7 +660,7 @@
             </div>
             <div id="divConfirmation" class="confirmation">
                 <span id='spanConfirmation' class="text"></span>
-                <span class="change-selection" style="justify-self: self-end;" onclick="changeOrder()">I change my
+                <span class="change-selection" onclick="changeOrder()">I change my
                     mind</span>
             </div>
         </div>
