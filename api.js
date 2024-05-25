@@ -61,12 +61,16 @@ module.exports = function (app) {
             return;
         };
         let coffee = savedOrders[classmateName].Coffee || '';
-        console.log(`getOrder: ${classmateName}, ${coffee}.`);
         response.json({
             success: true,
             result: 0,
             name: classmateName,
             coffee: coffee,
         });
+        let debugCoffee = coffee;
+        if (debugCoffee == '') {
+            debugCoffee = 'Not yet ordered'
+        }
+        console.log(`getOrder: ${classmateName}, ${debugCoffee}.`);
     });
 };
